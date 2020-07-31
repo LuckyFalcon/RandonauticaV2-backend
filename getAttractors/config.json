@@ -1,0 +1,8 @@
+{
+    "COSMODDB_USER": "randonautica-entropy",
+    "COSMOSDB_PASSWORD": "VywOpA1iuUYRyPD1HTH92r4qQSTHqHHEDHRkA1okvDNrTdpZZ9oMTrxE8MUjgqH4en9vfOWTPbRTWcSsPR4jGg==",
+    "COSMOSDB_DBNAME": "Entropy",
+    "COSMOSDB_HOST": "randonautica-entropy.mongo.cosmos.azure.com",
+    "COSMOSDB_PORT": "10255",
+    "secret": "r4Nd09285719275838374737WraPPeR129949949999994444848288!"
+}

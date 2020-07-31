@@ -1,0 +1,21 @@
+{
+  "name": "createuser",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "func start",
+    "test": "echo \"No tests yet...\""
+  },
+  "dependencies": {
+    "azure-function-express": "^2.0.0",
+    "db-errors": "^0.2.3",
+    "express": "^4.17.1",
+    "express-validator": "^6.6.0",
+    "firebase": "^7.15.1",
+    "firebase-admin": "^8.12.1",
+    "moment": "^2.27.0",
+    "mssql": "^6.2.0",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {}
+}

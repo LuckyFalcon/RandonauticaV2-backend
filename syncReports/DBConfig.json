@@ -1,0 +1,9 @@
+{
+    "USER": "randonautica",
+    "PASSWORD": "JffiPdidpKDvvsffSdf4!", 
+    "SERVER": "randonautica-db.database.windows.net",
+    "DB_NAME": "randonautica",
+    "USERS_TABLE": "users",
+    "TRIP_REPORTS_TABLE": "trip_reports",
+    "USER_DETAILS_TABLE": "user_details"
+}
