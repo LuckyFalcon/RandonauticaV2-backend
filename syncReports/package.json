@@ -7,16 +7,19 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.2.0-preview.1",
     "azure-function-express": "^2.0.0",
+    "azure-storage": "^2.10.3",
+    "base64-stream": "^1.0.0",
     "db-errors": "^0.2.3",
     "express": "^4.17.1",
     "express-validator": "^6.6.0",
     "firebase": "^7.15.1",
     "firebase-admin": "^8.12.1",
-    "mssql": "^6.2.0",
-    "request": "^2.88.2",
     "google-play-billing-validator": "^2.1.1",
-    "in-app-purchase": "^1.11.4"
+    "in-app-purchase": "^1.11.4",
+    "mssql": "^6.2.0",
+    "request": "^2.88.2"
   },
   "devDependencies": {}
 }

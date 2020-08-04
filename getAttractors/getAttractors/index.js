@@ -1,5 +1,4 @@
 ﻿'use strict';
-const addon = require('../build/Release/libAttractFunctions');
 const anuQrng = require('../api/anuapi.js');
 const request = require('request');
 const querystring = require('querystring');
@@ -7,11 +6,17 @@ const Auth = require('../helpers/Auth');
 const getAttractors = require('../helpers/FetchAttractors');
 const sortAttractors = require('../helpers/AttractorsSort');
 const sqlQueries = require('../helpers/SqlQueries');
-const validateCameraRNG = require('../helpers/validateCameraRNG');
+const validateCameraRNG = require('../helpers/ValidateCameraRNG');
 const { check, validationResult } = require('express-validator');
 const createHandler = require("azure-function-express").createHandler;
 const express = require("express");
 const crypto = require('crypto');
+
+//Windows
+//const addon = require('../build/Release/libAttractFunctions');
+
+//Linux
+const addon = require('../build/Release/AttractFunctions');
 
 // Create express app
 const app = express();

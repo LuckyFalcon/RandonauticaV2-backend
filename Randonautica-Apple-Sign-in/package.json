@@ -1,0 +1,14 @@
+{
+  "name": "azure-randonautica-sign-in",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "func start",
+    "test": "echo \"No tests yet...\""
+  },
+  "dependencies": {
+    "apple-auth": "^1.0.6",
+    "jsonwebtoken": "^8.5.1"
+  },
+  "devDependencies": {}
+}

@@ -6,6 +6,8 @@ const createHandler = require("azure-function-express").createHandler;
 const express = require("express");
 const config = require('../config.json');
 const UserInserts = require('../helpers/UserInserts');
+const GetImages = require('../helpers/image');
+const { check, validationResult } = require('express-validator');
 
 // Create express app
 const app = express();
@@ -24,23 +26,42 @@ app.get("/api/syncReports", [
   }
 
   try {
-    await UserInserts.SelectTripReports("bd810489-93d1-ea11-8b03-281878476d6c").then((data) => {
+    var tripReports = [];
 
-      var unloggedTripReports = [];
+    var user_id;
 
-      for(let i = 0; i < data.recordsets.length; i++){
-        if(data.recordsets[i][0].is_logged == 0){
-          unloggedTripReports.push(data.recordsets[i])
+    var sqlTripReports = await UserInserts.SelectTripReports('Yqk1vhUgS3ORkb5jqOhCMB00Rmw1');
+
+      if(sqlTripReports.recordsets[0].length > 0) {
+        user_id = sqlTripReports.recordsets[0][0].user_id;
+        console.log(user_id);
+        console.log(sqlTripReports.recordsets[0])
+        for(let i = 0; i < sqlTripReports.recordsets.length; i++){
+          tripReports.push(sqlTripReports.recordsets[i])
+        }
+      } else {
+        return res.status(404).json({ success: 'No Trips' });
+      }
+
+      var media = await UserInserts.SelectTripReportsMedia(tripReports)
+      var blobs = [];
+
+      if(media.recordsets[0].length > 0) {
+        for(let i = 0; i < media.recordsets.length; i++){
+            console.log(media.recordsets[0])
+            var blobObject = {
+              trip_id: media.recordsets[i][0].trip_report_id,
+              blob_id: media.recordsets[i][0].blob_id
+            }
+            blobs.push(blobObject)
         }
       }
 
-      return res.status(200).json(unloggedTripReports)
-    })
-    .catch(error => { 
-      //Something went wrong with setting agreement for user
-      console.log(error)
-      return res.status(500).json({ error: 'Something went wrong' })
-    });
+      console.log(blobs);
+
+      var images= await GetImages(blobs, user_id)
+
+      return res.status(200).json({ trips: tripReports, images: images });
 
   } catch (error) {
     console.log(error)

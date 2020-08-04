@@ -11,6 +11,7 @@ DEFS_Debug := \
 	'-DV8_IMMINENT_DEPRECATION_WARNINGS' \
 	'-D_LARGEFILE_SOURCE' \
 	'-D_FILE_OFFSET_BITS=64' \
+	'-D__STDC_FORMAT_MACROS' \
 	'-DOPENSSL_NO_PINSHARED' \
 	'-DOPENSSL_THREADS' \
 	'-DNAPI_DISABLE_CPP_EXCEPTIONS' \
@@ -26,6 +27,7 @@ CFLAGS_Debug := \
 	-Wall \
 	-Wextra \
 	-Wno-unused-parameter \
+	-m64 \
 	-g \
 	-O0
 
@@ -38,14 +40,14 @@ CFLAGS_CC_Debug := \
 	-std=gnu++1y
 
 INCS_Debug := \
-	-I/home/david/.cache/node-gyp/12.13.1/include/node \
-	-I/home/david/.cache/node-gyp/12.13.1/src \
-	-I/home/david/.cache/node-gyp/12.13.1/deps/openssl/config \
-	-I/home/david/.cache/node-gyp/12.13.1/deps/openssl/openssl/include \
-	-I/home/david/.cache/node-gyp/12.13.1/deps/uv/include \
-	-I/home/david/.cache/node-gyp/12.13.1/deps/zlib \
-	-I/home/david/.cache/node-gyp/12.13.1/deps/v8/include \
-	-I/home/david/ダウンロード/nodewrapper/node_modules/node-addon-api \
+	-I/home/api/.cache/node-gyp/12.16.3/include/node \
+	-I/home/api/.cache/node-gyp/12.16.3/src \
+	-I/home/api/.cache/node-gyp/12.16.3/deps/openssl/config \
+	-I/home/api/.cache/node-gyp/12.16.3/deps/openssl/openssl/include \
+	-I/home/api/.cache/node-gyp/12.16.3/deps/uv/include \
+	-I/home/api/.cache/node-gyp/12.16.3/deps/zlib \
+	-I/home/api/.cache/node-gyp/12.16.3/deps/v8/include \
+	-I/home/api/libwrapper2/node_modules/node-addon-api \
 	-I$(srcdir)/node_modules/nan
 
 DEFS_Release := \
@@ -57,6 +59,7 @@ DEFS_Release := \
 	'-DV8_IMMINENT_DEPRECATION_WARNINGS' \
 	'-D_LARGEFILE_SOURCE' \
 	'-D_FILE_OFFSET_BITS=64' \
+	'-D__STDC_FORMAT_MACROS' \
 	'-DOPENSSL_NO_PINSHARED' \
 	'-DOPENSSL_THREADS' \
 	'-DNAPI_DISABLE_CPP_EXCEPTIONS' \
@@ -69,6 +72,7 @@ CFLAGS_Release := \
 	-Wall \
 	-Wextra \
 	-Wno-unused-parameter \
+	-m64 \
 	-O3 \
 	-fno-omit-frame-pointer
 
@@ -81,14 +85,14 @@ CFLAGS_CC_Release := \
 	-std=gnu++1y
 
 INCS_Release := \
-	-I/home/david/.cache/node-gyp/12.13.1/include/node \
-	-I/home/david/.cache/node-gyp/12.13.1/src \
-	-I/home/david/.cache/node-gyp/12.13.1/deps/openssl/config \
-	-I/home/david/.cache/node-gyp/12.13.1/deps/openssl/openssl/include \
-	-I/home/david/.cache/node-gyp/12.13.1/deps/uv/include \
-	-I/home/david/.cache/node-gyp/12.13.1/deps/zlib \
-	-I/home/david/.cache/node-gyp/12.13.1/deps/v8/include \
-	-I/home/david/ダウンロード/nodewrapper/node_modules/node-addon-api \
+	-I/home/api/.cache/node-gyp/12.16.3/include/node \
+	-I/home/api/.cache/node-gyp/12.16.3/src \
+	-I/home/api/.cache/node-gyp/12.16.3/deps/openssl/config \
+	-I/home/api/.cache/node-gyp/12.16.3/deps/openssl/openssl/include \
+	-I/home/api/.cache/node-gyp/12.16.3/deps/uv/include \
+	-I/home/api/.cache/node-gyp/12.16.3/deps/zlib \
+	-I/home/api/.cache/node-gyp/12.16.3/deps/v8/include \
+	-I/home/api/libwrapper2/node_modules/node-addon-api \
 	-I$(srcdir)/node_modules/nan
 
 OBJS := \
@@ -123,14 +127,16 @@ $(obj).$(TOOLSET)/$(TARGET)/%.o: $(obj)/%.cc FORCE_DO_CMD
 ### Rules for final target.
 LDFLAGS_Debug := \
 	-pthread \
-	-rdynamic
+	-rdynamic \
+	-m64
 
 LDFLAGS_Release := \
 	-pthread \
-	-rdynamic
+	-rdynamic \
+	-m64
 
 LIBS := \
-	/home/david/ダウンロード/nodewrapper/services/functionwrapper/cppsrc/libAttract/libAttract.a.0.96.1
+	/home/api/libwrapper2/services/functionwrapper/cppsrc/libAttract/libAttract.a.0.96.1
 
 $(obj).target/AttractFunctions.node: GYP_LDFLAGS := $(LDFLAGS_$(BUILDTYPE))
 $(obj).target/AttractFunctions.node: LIBS := $(LIBS)

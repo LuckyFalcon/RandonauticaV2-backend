@@ -5,5 +5,6 @@
     "DB_NAME": "randonautica",
     "USERS_TABLE": "users",
     "TRIP_REPORTS_TABLE": "trip_reports",
+    "TRIP_REPORTS_MEDIA_TABLE": "trip_report_media",
     "USER_DETAILS_TABLE": "user_details"
 }

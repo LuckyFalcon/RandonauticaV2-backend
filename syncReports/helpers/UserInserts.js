@@ -17,7 +17,40 @@ async function SelectTripReports(user) {
 
     return new Promise(resolve => {
         var insertQuery = `SELECT * FROM ${config.TRIP_REPORTS_TABLE} `;
-        insertQuery += `WHERE user_id = '${user}'`
+        insertQuery += `WHERE user_id = `
+        
+        //Fetch uniqueidentifier from users table
+        insertQuery += `(SELECT id FROM ${config.USERS_TABLE} WHERE uuid = `;
+        insertQuery += `'${user}'`;
+        insertQuery += `)`;
+
+        console.log(insertQuery);
+
+        sql.connect(dbConfig).then((pool) => {
+            resolve(pool.query(insertQuery))
+        })
+    })
+}
+
+
+async function SelectTripReportsMedia(tripreports) {
+
+    return new Promise(resolve => {
+        var insertQuery = `SELECT * FROM ${config.TRIP_REPORTS_MEDIA_TABLE} `;
+        insertQuery += `WHERE (trip_report_id) IN ( `
+        
+
+        console.log(tripreports[0].length)
+        if(tripreports[0].length > 1){
+            for(var i = 0; i < tripreports[0].length-1; i++){
+                insertQuery += `  ('${tripreports[0][i].id}'), `
+            }
+            insertQuery += `  ('${tripreports[0][tripreports[0].length-1].id}') `
+        } else {
+            insertQuery += `  ('${tripreports[0][0].id}') `
+        }
+        
+        insertQuery += `)`;
 
         console.log(insertQuery);
 
@@ -29,4 +62,5 @@ async function SelectTripReports(user) {
 
 module.exports = {
     SelectTripReports,
+    SelectTripReportsMedia
 };
