@@ -26,11 +26,11 @@ async function InsertPurchaseHistory(purchaseObject, user) {
         insertQuery += "product_id,";
         insertQuery += "user_id,";
         insertQuery += "purchase_id,";
-        insertQuery += "local_verification_data,";
-        insertQuery += "server_verification_data,";
-        insertQuery += "source,";
-        insertQuery += "transaction_data,";
-        insertQuery += "status,";
+  //      insertQuery += "local_verification_data,";
+    //    insertQuery += "server_verification_data,";
+        // insertQuery += "source,";
+        // insertQuery += "transaction_data,";
+        // insertQuery += "status,";
        // insertQuery += "error_code,"; //0
        // insertQuery += "error_message,"; //0 
        // insertQuery += "error_details"; //0
@@ -42,11 +42,11 @@ async function InsertPurchaseHistory(purchaseObject, user) {
         insertQuery += `),`;
 
         insertQuery += `'0',`;
-        insertQuery += `'${platform}',`;
-        insertQuery += `'${platform}',`;
-        insertQuery += `'${platform}',`;
-        insertQuery += `'${platform}',`;
-        insertQuery += `'${platform}',`;
+        //insertQuery += `'${purchaseObject}'`;
+        // insertQuery += `'${platform}',`;
+        // insertQuery += `'${platform}',`;
+        // insertQuery += `'${platform}',`;
+        // insertQuery += `'${platform}',`;
 
         insertQuery += ")";
 
@@ -64,7 +64,7 @@ async function addToPointsBalance(user, amountOfPoints) {
         insertQuery += `SET points = points + '${amountOfPoints}'`
 
 
-        insertQuery += `WHERE user_id = `
+        insertQuery += ` WHERE user_id = `
         //Fetch uniqueidentifier from users table
         insertQuery += `(SELECT id FROM ${config.USERS_TABLE} WHERE uuid = `;
         insertQuery += `'${user}'`;
@@ -84,7 +84,7 @@ async function SetWaterPointsActive(user) {
         insertQuery += `SET is_iap_skip_water_points = 1`
 
 
-        insertQuery += `WHERE user_id = `
+        insertQuery += ` WHERE user_id = `
         //Fetch uniqueidentifier from users table
         insertQuery += `(SELECT id FROM ${config.USERS_TABLE} WHERE uuid = `;
         insertQuery += `'${user}'`;
@@ -101,10 +101,10 @@ async function upgradeRadius(user, amountOfPoints) {
 
     return new Promise(resolve => {
         var insertQuery = `UPDATE ${config.USER_DETAILS_TABLE} `;
-        insertQuery += `SET is_iap_extend_radius = is_iap_extend_radius + 1`
+        insertQuery += `SET is_iap_extend_radius = 1`
 
 
-        insertQuery += `WHERE user_id = `
+        insertQuery += ` WHERE user_id = `
         //Fetch uniqueidentifier from users table
         insertQuery += `(SELECT id FROM ${config.USERS_TABLE} WHERE uuid = `;
         insertQuery += `'${user}'`;

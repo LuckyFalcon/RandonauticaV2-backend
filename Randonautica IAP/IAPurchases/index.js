@@ -41,6 +41,7 @@ app.post("/api/IAPurchases", [
 ], async (req, res) => {
 
   const errors = validationResult(req);
+
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
@@ -83,7 +84,9 @@ app.post("/api/IAPurchases", [
           .then((response) => {
             if (iap.isValidated(response)) {
               // valid receipt
-              upgradeUser(req.user, response)
+              upgradeUser(req.user, response).then((validatedData) =>{
+                return res.status(200).json(validatedData)
+              })
             }
           })
           .then((validatedData) => {
@@ -120,11 +123,15 @@ async function upgradeUser(user, validatedData, context) {
  // console.log(purchaseData);
   switch (purchaseData[0].productId) {
     case "20_owl_tokens":
-      // code block
+      if (purchaseData[0].service == "google") {
+        await SqlQueries.addToPointsBalance(user, 20).catch(error => { //Something went wrong
+          console.log(error)
+          return res.status(500).json({ error: 'Something went wrong' })
+        });
+      } 
       break;
     case "60_owl_tokens":
-      console.log('60owltokenreached')
-      // code block
+    //  await SqlQueries.InsertPurchaseHistory(purchaseData, user);
       console.log(purchaseData)
       if (purchaseData[0].service == "google") {
         await SqlQueries.addToPointsBalance(user, 60).catch(error => { //Something went wrong
@@ -132,7 +139,6 @@ async function upgradeUser(user, validatedData, context) {
           return res.status(500).json({ error: 'Something went wrong' })
         });
       }   
-      iap.con
       break;
       case "150_owl_tokens":
         // code block
@@ -157,6 +163,10 @@ async function upgradeUser(user, validatedData, context) {
       break;
     case "extend_radius":
       // code block
+      await SqlQueries.upgradeRadius(user).catch(error => { //Something went wrong
+        console.log(error)
+        return res.status(500).json({ error: 'Something went wrong' })
+      });
       break;
     case "skip_water_points":
       // code block
@@ -172,28 +182,6 @@ async function upgradeUser(user, validatedData, context) {
   return validatedData;
 
 }
-
-//Acknowledge purchase server side
-async function AcknowledgePurchase(validatedData) {
-
-  var verifier = new Verifier(options);
-
-
-  let promiseData = verifier.verifyINAPP(validatedData)
-
-
-  promiseData.then(function (response) {
-    // Purchase should be acknowledged
-    // See response structure below
-    return response;
-  })
-    .catch(function (error) {
-      // Purchase is not valid or API error
-      // See possible error messages below
-      console.log(error)
-    })
-
-} //Success end
 
 
 module.exports = createHandler(app);
