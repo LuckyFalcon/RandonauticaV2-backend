@@ -11,6 +11,7 @@ const SqlQueries = require('../helpers/SqlQueries');
 const app = express();
 
 // Add FireBase authentication middleware
+// Comment this out if you don't plan on using a JWT Firebase token
 app.use(Auth);
 
 //In App purchase configuration
