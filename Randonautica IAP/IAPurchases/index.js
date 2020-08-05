@@ -34,14 +34,25 @@ var options = {
 };
 
 app.post("/api/IAPurchases", [
-  check('platform')
-  .isInt()
-  .not().isEmpty(),
+  check('receipt')
+    .isString()
+    .optional(),
+  check('packageName')
+    .isString()
+    .not().isEmpty(),
+  check('productId')
+    .isString()
+    .not().isEmpty(),
+  check('purchaseToken')
+    .isString()
+    .not().isEmpty(),
+  check('subscription')
+    .isString()
+    .not().isEmpty(),
 
 ], async (req, res) => {
 
   const errors = validationResult(req);
-
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
@@ -120,7 +131,14 @@ async function upgradeUser(user, validatedData, context) {
 
   // validatedData contains sandbox: true/false for Apple and Amazon
   var purchaseData = iap.getPurchaseData(validatedData, options);
- // console.log(purchaseData);
+
+  //prints purchasedata
+  console.log(purchaseData);
+
+  //Insert purchase in db
+  await SqlQueries.InsertPurchaseHistory(purchaseData, user);
+
+  //Based on product id
   switch (purchaseData[0].productId) {
     case "20_owl_tokens":
       if (purchaseData[0].service == "google") {
@@ -131,8 +149,6 @@ async function upgradeUser(user, validatedData, context) {
       } 
       break;
     case "60_owl_tokens":
-    //  await SqlQueries.InsertPurchaseHistory(purchaseData, user);
-      console.log(purchaseData)
       if (purchaseData[0].service == "google") {
         await SqlQueries.addToPointsBalance(user, 60).catch(error => { //Something went wrong
           console.log(error)
@@ -141,42 +157,35 @@ async function upgradeUser(user, validatedData, context) {
       }   
       break;
       case "150_owl_tokens":
-        // code block
         await SqlQueries.addToPointsBalance(user, 150).catch(error => { //Something went wrong
           console.log(error)
           return res.status(500).json({ error: 'Something went wrong' })
         });
         break;
     case "500_owl_tokens":
-      // code block
       await SqlQueries.addToPointsBalance(user, 500).catch(error => { //Something went wrong
         console.log(error)
         return res.status(500).json({ error: 'Something went wrong' })
       });
       break;
     case "1500_owl_tokens":
-      // code block
       await SqlQueries.addToPointsBalance(user, 1500).catch(error => { //Something went wrong
         console.log(error)
         return res.status(500).json({ error: 'Something went wrong' })
       });
       break;
     case "extend_radius":
-      // code block
       await SqlQueries.upgradeRadius(user).catch(error => { //Something went wrong
         console.log(error)
         return res.status(500).json({ error: 'Something went wrong' })
       });
       break;
     case "skip_water_points":
-      // code block
       await SqlQueries.SetWaterPointsActive(user).catch(error => { //Something went wrong
         console.log(error)
         return res.status(500).json({ error: 'Something went wrong' })
       });
       break;
-    default:
-    // code block
   }
   
   return validatedData;

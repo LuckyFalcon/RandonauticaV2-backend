@@ -1,22 +1,18 @@
-var iap = require('in-app-purchase');
-var Verifier = require('google-play-billing-validator');
 const { check, validationResult } = require('express-validator');
 const Auth = require('../helpers/Auth');
 const createHandler = require("azure-function-express").createHandler;
 const express = require("express");
-const config = require('../config.json');
 const UserInserts = require('../helpers/UserInserts');
-const GetImages = require('../helpers/image');
-const { check, validationResult } = require('express-validator');
+const FetchImages = require('../helpers/image');
 
 // Create express app
 const app = express();
 
 // Add FireBase authentication middleware
-//app.use(Auth);
+app.use(Auth);
 
 app.get("/api/syncReports", [
-//Verifying parameters here
+  //Verifying parameters here
 
 ], async (req, res) => {
 
@@ -26,45 +22,49 @@ app.get("/api/syncReports", [
   }
 
   try {
+    //Trip reports
     var tripReports = [];
 
+    //Images from Azure Storage
+    var imageBlobs = [];
+
+    //User_id retrieved in trip reports
     var user_id;
 
-    var sqlTripReports = await UserInserts.SelectTripReports('Yqk1vhUgS3ORkb5jqOhCMB00Rmw1');
+    //Get Trip reports
+    var sqlTripReports = await UserInserts.SelectTripReports(req.user);
 
-      if(sqlTripReports.recordsets[0].length > 0) {
-        user_id = sqlTripReports.recordsets[0][0].user_id;
-        console.log(user_id);
-        console.log(sqlTripReports.recordsets[0])
-        for(let i = 0; i < sqlTripReports.recordsets.length; i++){
-          tripReports.push(sqlTripReports.recordsets[i])
+    //Check for trip reports
+    if (sqlTripReports.recordsets[0].length > 0) {
+      user_id = sqlTripReports.recordsets[0][0].user_id;
+      for (let i = 0; i < sqlTripReports.recordsets.length; i++) {
+        delete sqlTripReports.recordsets[0][i]['user_id'];
+        tripReports.push(sqlTripReports.recordsets[i])
+      }
+    } else {
+      return res.status(404).json({ success: 'No Trips' });
+    }
+
+    //Get image data from database
+    var tripReportsMedia = await UserInserts.SelectTripReportsMedia(tripReports)
+
+    if (tripReportsMedia.recordsets[0].length > 0) {
+      for (let i = 0; i < tripReportsMedia.recordsets[0].length; i++) {
+        var blobObject = {
+          trip_id: tripReportsMedia.recordsets[0][i].trip_report_id,
+          blob_id: tripReportsMedia.recordsets[0][i].blob_id
         }
-      } else {
-        return res.status(404).json({ success: 'No Trips' });
+        imageBlobs.push(blobObject)
       }
 
-      var media = await UserInserts.SelectTripReportsMedia(tripReports)
-      var blobs = [];
+      //Get images from Azure Storage
+      imageBlobs = await FetchImages(imageBlobs, user_id)
+    }
 
-      if(media.recordsets[0].length > 0) {
-        for(let i = 0; i < media.recordsets.length; i++){
-            console.log(media.recordsets[0])
-            var blobObject = {
-              trip_id: media.recordsets[i][0].trip_report_id,
-              blob_id: media.recordsets[i][0].blob_id
-            }
-            blobs.push(blobObject)
-        }
-      }
-
-      console.log(blobs);
-
-      var images= await GetImages(blobs, user_id)
-
-      return res.status(200).json({ trips: tripReports, images: images });
+    //Return trip reports and images back to client
+    return res.status(200).json({ trips: tripReports, images: imageBlobs });
 
   } catch (error) {
-    console.log(error)
     //An error occurred in the logic above
     return res.status(500).json({ error: 'Something went wrong' })
   }

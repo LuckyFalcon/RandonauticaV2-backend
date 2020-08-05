@@ -53,7 +53,7 @@ app.post("/logmytrip", [
     .isString()
     .not().isEmpty(),
   check('favorite')
-    .isString()
+    .isInt()
     .not().isEmpty(),
   check('title')
     .isString()
@@ -62,7 +62,7 @@ app.post("/logmytrip", [
     .isString()
     .not().isEmpty(),
   check('image')
-    .isString()
+    .isBase64()
     .not().isEmpty(),
 ], async (req, res) => {
 
@@ -73,7 +73,8 @@ app.post("/logmytrip", [
 
   try {
 
-    var object = {
+    //Store trip details
+    var TripObject = {
       GID: req.body.GID,
       favorite: req.body.favorite,
       title: req.body.title,
@@ -81,49 +82,40 @@ app.post("/logmytrip", [
       image: req.body.image,
     }
 
-    const base64ValidationMatches = b64string.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-    var buf = Buffer.from(b64string, "base64");
+    //Store B64 in buffer and convert to JPEG
+    const uri = TripObject.image.split(';base64,').pop()
 
-    const uri = b64string.split(';base64,').pop()
-    var buf = Buffer.from(uri, 'base64'); // Ta-da
+    var buf = Buffer.from(uri, 'base64');
+
     var imagebuffer = await sharp(buf)
       .toFormat('jpeg')
       .jpeg()
       .toBuffer();
 
-    var value = await convert(imagebuffer)
+    
+    var convertedImage = await convert(imagebuffer)
 
-    const predictions = await _model.classify(value)
-    value.dispose();
+    const predictions = await _model.classify(convertedImage)
+
+    convertedImage.dispose();
+
     console.log(predictions);
 
-    var UpdateTripOutput = await Insert.UpdateTrip(req.user, object);
+    var UpdateTripOutput = await Insert.UpdateTrip(req.user, TripObject);
 
     console.log(UpdateTripOutput);
 
     var user_id = UpdateTripOutput.recordset[0].user_id;
 
-    var b64string = object.image;
-
-
-
-
-
     var UploadImageResult = await UploadImage(imagebuffer, user_id);
 
-    await Insert.InsertMedia(UploadImageResult, object.GID);
+    await Insert.InsertMedia(UploadImageResult, TripObject.GID);
 
-    return res.status(200).json({ success: value })
+    return res.status(200).json({ success: 'success' })
 
   } catch (error) {
     console.log(error)
-    req.context.res = {
-      status: 400,
-      body: error,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
+    return res.status(200).json({ error: 'Error' })
   }
 });
 

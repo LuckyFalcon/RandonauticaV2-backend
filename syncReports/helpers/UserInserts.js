@@ -24,8 +24,6 @@ async function SelectTripReports(user) {
         insertQuery += `'${user}'`;
         insertQuery += `)`;
 
-        console.log(insertQuery);
-
         sql.connect(dbConfig).then((pool) => {
             resolve(pool.query(insertQuery))
         })
@@ -40,7 +38,6 @@ async function SelectTripReportsMedia(tripreports) {
         insertQuery += `WHERE (trip_report_id) IN ( `
         
 
-        console.log(tripreports[0].length)
         if(tripreports[0].length > 1){
             for(var i = 0; i < tripreports[0].length-1; i++){
                 insertQuery += `  ('${tripreports[0][i].id}'), `
@@ -51,8 +48,6 @@ async function SelectTripReportsMedia(tripreports) {
         }
         
         insertQuery += `)`;
-
-        console.log(insertQuery);
 
         sql.connect(dbConfig).then((pool) => {
             resolve(pool.query(insertQuery))

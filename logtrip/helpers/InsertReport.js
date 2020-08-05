@@ -107,7 +107,7 @@ async function UpdateTrip(user, object) {
         insertQuery += "SET "
 
         insertQuery += `is_visited=0,`;
-        insertQuery += `is_logged=0,`;
+        insertQuery += `is_logged=1,`;
         insertQuery += `is_favorite=0,`;
         insertQuery += `rng_type=0,`;
         insertQuery += `point_type=0,`;
