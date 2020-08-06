@@ -4,8 +4,5 @@
     "SERVER": "randonautica-db.database.windows.net",
     "DB_NAME": "randonautica",
     "USERS_TABLE": "users",
-    "TRIP_REPORTS": "trip_reports",
-    "HASHTAGS": "hashtags",
-    "REPORT_MEDIA": "trip_report_media",
-    "TRIP_REPOT_HASHTAGS": "trip_report_hashtags"
+    "TRIP_REPORTS": "trip_reports"
 }

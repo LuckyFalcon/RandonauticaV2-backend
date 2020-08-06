@@ -17,22 +17,28 @@ app.get("/saveTrip", [
 
 ], async (req, res) => {
 
+  //Error found in validation of parameters
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
 
   try {
-      
+    
+    //Store unique GID of repot
     var GID = req.query.GID;
 
+    //Update trip report
     await SQLQueries.UpdateTrip(req.user, GID);
 
+    //Send response back to client
     return res.status(200).json({ success: 'success' })
 
   } catch (error) {
-    console.log(error)
+
+    //Send error response back to client
     return res.status(500).json({ error: 'Error' })
+
   }
 });
 
