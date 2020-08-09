@@ -1,4 +1,3 @@
-const request   = require('request');
 const sql       = require('mssql');
 const path      = require('path');
 const config    = require(path.join(process.cwd(), 'DBConfig'));
@@ -17,7 +16,7 @@ async function SelectTrip(gid) {
     return new Promise(resolve => {
 
         var insertQuery = `SELECT * FROM ${config.TRIP_REPORTS} WHERE newtonlib_gid = '${gid}'`;
-        console.log(insertQuery);
+
         sql.connect(dbConfig).then((pool) => {
             resolve(pool.query(insertQuery))
         })
@@ -36,7 +35,6 @@ async function InsertTripReportHashtags(blob_id, gid) {
         insertQuery += `'${gid}'`;
         insertQuery += `),`;
 
-        // insertQuery += `'NULL',`;
         insertQuery += `'0',`;
         insertQuery += `'${blob_id}'`; //Blob_id
         insertQuery += ")";
@@ -49,28 +47,22 @@ async function InsertTripReportHashtags(blob_id, gid) {
 
 async function InsertMedia(blob_id, gid) {
     return new Promise(resolve => {
-        console.log('test'+blob_id)
+
         var insertQuery = `INSERT INTO ${config.REPORT_MEDIA} (`;
-         insertQuery += "trip_report_id,";
+        insertQuery += "trip_report_id,";
         insertQuery += "type,";
         insertQuery += "blob_id";
-      //  insertQuery += "created,";
-       // insertQuery += "updated";  
         insertQuery += ") VALUES (";
 
-        // //Fetch uniqueidentifier from users table
+        //Fetch uniqueidentifier from users table
         insertQuery += `(SELECT id FROM ${config.TRIP_REPORTS} WHERE newtonlib_gid = `;
         insertQuery += `'${gid}'`;
         insertQuery += `),`;
 
-        // insertQuery += `'NULL',`;
         insertQuery += `'0',`;
-        insertQuery += `'${blob_id}'`;      //Blob_id
-      //  insertQuery += `'0',`;
-     //   insertQuery += `'0'`;
-   
-   
+        insertQuery += `'${blob_id}'`; //Blob_id  
         insertQuery += ")";
+
         sql.connect(dbConfig).then((pool) => {
             resolve(pool.query(insertQuery))
         })
@@ -85,15 +77,13 @@ async function InsertHashtags(tags) {
 
         if(tags.length > 1){
             for(var i = 0; i < tags.length-1; i++){
-                // //Fetch uniqueidentifier from users table
+                // Fetch uniqueidentifier from users table
                 insertQuery += `('${tags[i]}'), `;
             }
             insertQuery += `('${tags[tags.length-1]}}') `;
         } else {
             insertQuery += `('${tags[0]}}') `;
         }
-
-
 
         sql.connect(dbConfig).then((pool) => {
             resolve(pool.query(insertQuery, tags))
@@ -121,8 +111,6 @@ async function UpdateTrip(user, object) {
         insertQuery += `(SELECT id FROM ${config.USERS_TABLE} WHERE uuid = `;
         insertQuery += `'${user}'`;
         insertQuery += `)`;
-
-        console.log(insertQuery)
 
         sql.connect(dbConfig).then((pool) => {
             resolve(pool.query(insertQuery))

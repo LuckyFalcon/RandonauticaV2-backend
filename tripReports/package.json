@@ -1,0 +1,19 @@
+{
+  "name": "storeimage",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "func start",
+    "test": "echo \"No tests yet...\""
+  },
+  "dependencies": {
+    "@azure/storage-blob": "^12.2.0-preview.1",
+    "azure-function-express": "^2.0.0",
+    "express": "^4.17.1",
+    "express-validator": "^6.6.1",
+    "firebase": "^7.15.1",
+    "firebase-admin": "^8.12.1",
+    "mssql": "^6.2.0"
+  },
+  "devDependencies": {}
+}

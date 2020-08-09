@@ -24,6 +24,8 @@ async function SelectTripReports(user) {
         insertQuery += `'${user}'`;
         insertQuery += `)`;
 
+        insertQuery += ` AND is_saved = 1`;
+
         sql.connect(dbConfig).then((pool) => {
             resolve(pool.query(insertQuery))
         })

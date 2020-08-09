@@ -1,4 +1,4 @@
-﻿{
+{
   "bindings": [
     {
       "authLevel": "function",
@@ -6,7 +6,7 @@
       "direction": "in",
       "name": "req",
       "methods": [
-        "post"
+        "get"
       ]
     },
     {
@@ -14,6 +14,5 @@
       "direction": "out",
       "name": "res"
     }
-  ],
-  "disabled": false
+  ]
 }

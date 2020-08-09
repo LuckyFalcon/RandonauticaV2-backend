@@ -1,20 +1,13 @@
 ﻿'use strict';
-const addon = require('../build/Release/libAttractFunctions');
-const anuQrng = require('../api/anuapi.js');
 const UploadImage = require('../helpers/image.js');
 const Insert = require('../helpers/InsertReport.js');
-
-const request = require('request');
-const querystring = require('querystring');
 const Auth = require('../helpers/Auth');
-const getAttractors = require('../helpers/FetchAttractors');
-const validateCameraRNG = require('../helpers/validateCameraRNG');
 const createHandler = require("azure-function-express").createHandler;
 const express = require("express");
-var fileupload = require("express-fileupload");
 const sharp = require('sharp');
 const tf = require('@tensorflow/tfjs-node')
 const nsfw = require('nsfwjs')
+
 // Create express app as usual
 const app = express();
 const jpeg = require('jpeg-js')
@@ -27,6 +20,7 @@ let _model
 
 const convert = async (img) => {
   return new Promise(resolve => {
+
     // Decoded image in UInt8 Byte array
     const image = jpeg.decode(img, true)
 
@@ -118,9 +112,6 @@ app.post("/logmytrip", [
     return res.status(200).json({ error: 'Error' })
   }
 });
-
-
-
 
 module.exports = createHandler(app)
 
