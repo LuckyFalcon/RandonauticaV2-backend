@@ -37,12 +37,11 @@ app.use(limiter);
 /*  
 Random point = 1 token
 Quantum random point = 2 token
-Anomaly/Attractor/Void = 3 token
 Amplification bias = 5 token
 */
 
 const RandomPointCost = 1;
-const QuantumPointCost = 3;
+const QuantumPointCost = 2;
 const AmplificationBiasPointCost = 5;
 
 app.get("/getattractors", [
@@ -78,21 +77,22 @@ app.get("/getattractors", [
     var pointCost;
 
     //Verifiy if the point selected is the following and whether the user has enough points
+    //Infnite point users are noted as having -333 points
     switch (entropySource) {
       case '1':
-        if (user.recordset[0].points < RandomPointCost) {
+        if (user.recordset[0].points < RandomPointCost && user.recordset[0].points != -333) {
           return res.status(400).json({ error: 'Not enough points' })
         }
         pointCost = RandomPointCost;
         break;
       case '2':
-        if (user.recordset[0].points < QuantumPointCost) {
+        if (user.recordset[0].points < QuantumPointCost && user.recordset[0].points != -333) {
           return res.status(400).json({ error: 'Not enough points' })
         }
         pointCost = QuantumPointCost;
         break;
       case '3':
-        if (user.recordset[0].points < AmplificationBiasPointCost) {
+        if (user.recordset[0].points < AmplificationBiasPointCost && user.recordset[0].points != -333) {
           return res.status(400).json({ error: 'Not enough points' })
         }
         pointCost = AmplificationBiasPointCost;
@@ -166,7 +166,10 @@ app.get("/getattractors", [
         return highestAttractorPoint
       })
       .then(async (highestAttractorPoint) => { //Update point balance in DB
-        await sqlQueries.updatePointsBalance(req.user, pointCost)
+        //Check for infinite point users
+        if(user.recordset[0].points != -333) {
+          await sqlQueries.updatePointsBalance(req.user, pointCost)
+        }
         return highestAttractorPoint
       })
       .then((highestAttractorPoint) => res.status(200).json(highestAttractorPoint))
