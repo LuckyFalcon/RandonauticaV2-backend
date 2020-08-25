@@ -11,6 +11,7 @@ const { check, validationResult } = require('express-validator');
 const createHandler = require("azure-function-express").createHandler;
 const express = require("express");
 const crypto = require('crypto');
+const rateLimit = require("express-rate-limit");
 
 //Windows
 //const addon = require('../build/Release/libAttractFunctions');
@@ -18,11 +19,20 @@ const crypto = require('crypto');
 //Linux
 const addon = require('../build/Release/AttractFunctions');
 
+//Rate limiter
+const limiter = rateLimit({
+  windowMs: 1 * 10 * 1000, // 10 seconds
+  max: 1 // limit each IP to 1 requests per windowMs
+});
+
 // Create express app
 const app = express();
 
 //Firebase Authentication middleware
 app.use(Auth);
+ 
+//Apply limiter to all requests
+app.use(limiter);
 
 /*  
 Random point = 1 token
@@ -70,19 +80,19 @@ app.get("/getattractors", [
     //Verifiy if the point selected is the following and whether the user has enough points
     switch (entropySource) {
       case '1':
-        if (!user.recordset[0].points >= RandomPointCost) {
+        if (user.recordset[0].points < RandomPointCost) {
           return res.status(400).json({ error: 'Not enough points' })
         }
         pointCost = RandomPointCost;
         break;
       case '2':
-        if (!user.recordset[0].points >= QuantumPointCost) {
+        if (user.recordset[0].points < QuantumPointCost) {
           return res.status(400).json({ error: 'Not enough points' })
         }
         pointCost = QuantumPointCost;
         break;
       case '3':
-        if (!user.recordset[0].points >= AmplificationBiasPointCost) {
+        if (user.recordset[0].points < AmplificationBiasPointCost) {
           return res.status(400).json({ error: 'Not enough points' })
         }
         pointCost = AmplificationBiasPointCost;
@@ -92,7 +102,6 @@ app.get("/getattractors", [
         return res.status(400).json({ error: 'No point source found' })
     }
 
-    console.log(user.recordset[0].points)
     //Check whether the user wishes to check for water points
     var checkWater = req.query.checkwater;
 
@@ -103,7 +112,6 @@ app.get("/getattractors", [
         checkWater = true;
       } else { 
         //User doesn't have access to skipping water points
-        console.log('no access')
         checkWater = false;
       }
     } else {
@@ -123,7 +131,7 @@ app.get("/getattractors", [
 
     //Initizialize Entropy
     var entropy;
-    console.log(entropySource)
+
     //Generate Entropy based on the selected source given
     switch (entropySource) {
       case '1':
@@ -163,12 +171,9 @@ app.get("/getattractors", [
       })
       .then((highestAttractorPoint) => res.status(200).json(highestAttractorPoint))
       .catch((error) => {
-        console.log('error' + error)
         return res.status(500).json({ error: 'Something went wrong' })
       })
   } catch (error) {
-    console.log('error' + error)
-
     //An error occurred in the logic above
     return res.status(500).json({ error: 'Something went wrong' })
   }

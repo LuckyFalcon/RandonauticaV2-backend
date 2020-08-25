@@ -124,7 +124,6 @@ async function updatePointsBalance(user, amountOfPoints) {
         insertQuery += `'${user}'`;
         insertQuery += `)`;
 
-        console.log(insertQuery)
         sql.connect(dbConfig).then((pool) => {
             resolve(pool.query(insertQuery))
         })
@@ -141,7 +140,6 @@ async function SelectUserDetails(user) {
         insertQuery += `'${user}'`;
         insertQuery += `)`;
 
-        console.log(insertQuery)
         sql.connect(dbConfig).then((pool) => {
             resolve(pool.query(insertQuery))
         })
