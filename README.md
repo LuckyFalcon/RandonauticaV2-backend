@@ -1,5 +1,5 @@
 # RandonauticaV2-backend
-Backend for Randonautica V2
+Backend for Randonautica V2 which was in development in 2020 after the app went viral.
 
 
 IAPurchases: Responsible for the verifying the in app purchases users make
